@@ -133,3 +133,7 @@ function ajax(call_back_func, form_data) {
         console.error("ajax : " + err.message);
     }
 }
+
+function download_cv() {
+    window.open("Arian_CV.pdf", '_blank');
+}
