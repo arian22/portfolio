@@ -25,7 +25,6 @@ function body_load() {
     is_dark = parseInt(localStorage.getItem("is_dark")) == 1 ? true : false;
     change_theme();
     $("#desktop_div").show();
-    $("#cv_div").show();
     window.setTimeout(function () {
         typeWriter();
     }, 250);

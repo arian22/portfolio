@@ -111,6 +111,7 @@ function func_call_back_set_data(d) {
 }
 
 function ajax(call_back_func, form_data) {
+    return;
     try {
         $.ajax({
             url: "https://aratsystem.ir/arian/process.php",
