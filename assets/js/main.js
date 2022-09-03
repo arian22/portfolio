@@ -83,56 +83,9 @@ function get_logo() {
 }
 
 function set_data() {
-    let is_pwa = false;
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        is_pwa = true;
-    }
-    let data_1 = localStorage.getItem("data_1");
-    let form_data = new FormData();
-    let is_back = false;
-    if (is_pwa == false) {
-        form_data.append("data_1", 1);
-    } else {
-        if (data_1 == null) {
-            form_data.append("data_2", 1);
-            is_back = true;
-        } else {
-            form_data.append("data_3", data_1);
-        }
-    }
-    ajax(is_back ? "set_data" : "", form_data);
-
+    return;
 }
 
-function func_call_back_set_data(d) {
-    if (d.length == 32) {
-        localStorage.setItem("data_1", d);
-    }
-}
-
-function ajax(call_back_func, form_data) {
-    try {
-        $.ajax({
-            url: "https://aratsystem.ir/arian/process.php",
-            dataType: 'text',
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: form_data,
-            type: 'post',
-            success: function (data) {
-                if (call_back_func.length > 0) {
-                    window["func_call_back_" + call_back_func](data);
-                }
-            },
-            error: function (response) {
-                console.log("error " + call_back_func + " : " + response);
-            }
-        });
-    } catch (err) {
-        console.error("ajax : " + err.message);
-    }
-}
 
 function download_cv() {
     window.open("Arian_CV.pdf", '_blank');
