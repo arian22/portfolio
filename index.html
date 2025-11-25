@@ -20,7 +20,14 @@
 
 <body onload="body_load()">
     <button class="btn" onclick="startScan()">s</button>
-    <video id="video" style="width: 1px; height: 1px; position: absolute; opacity: 0;"></video>
+    <div style="width: 100%; max-width: 400px; margin-top: 20px;">
+        <video id="video" style="
+            width: 100%;
+            border: 2px solid #000;
+            border-radius: 10px;
+            background: #000;
+        "></video>
+    </div>
     <canvas id="canvas" style="display:none;"></canvas>
 
 
@@ -283,13 +290,12 @@
                 const context = canvas.getContext("2d");
 
                 try {
-                    // Request the back camera
                     videoStream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: "environment" }
                     });
 
                     video.srcObject = videoStream;
-                    video.setAttribute("playsinline", true); // Needed for iOS Safari
+                    video.setAttribute("playsinline", true); // iPhone fix
                     await video.play();
 
                     scanFrame();
@@ -308,14 +314,13 @@
                         const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imgData.data, canvas.width, canvas.height);
 
-                        // 🔥 Only alert if the QR code exists AND contains text
+                        // Only alert when the QR actually has text
                         if (code && code.data && code.data.trim() !== "") {
                             alert("QR Code: " + code.data);
                             stopScan();
                             return;
                         }
                     }
-
                     requestAnimationFrame(scanFrame);
                 }
             }
