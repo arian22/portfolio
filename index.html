@@ -19,23 +19,6 @@
 </head>
 
 <body onload="body_load()">
-    <button class="btn" onclick="startScan()">s</button>
-    <div style="width: 100%; max-width: 400px; margin-top: 20px;">
-        <video id="video" style="
-            width: 100%;
-            border: 2px solid #000;
-            border-radius: 10px;
-            background: #000;
-        "></video>
-    </div>
-    <canvas id="canvas" style="display:none;"></canvas>
-
-
-    <div id="div_top"></div> <button class="btn-floating grey" id="btnTheme" style="display: none;"
-        onclick="change_theme()"></button>
-    <div onclick="show_modal_save()" class="install_icon" style="display: none;">
-        <p style="margin: 5px; padding: 0px 15px;"> install</p>
-    </div>
     <div class="parallax-container back_before z-depth-3">
         <nav class="navParent" style="position: fixed; z-index: 999; display: none;" id="navbarParent">
             <div class="nav-wrapper pNav"><a href="#" class="sidenav-trigger" data-target="mobile-nav"> <i
@@ -280,58 +263,6 @@
         <script src="assets/js/animation.js?v=1"></script>
         <script src="assets/js/main.js?v=1"></script>
         <script>$(document).ready(function () { $('.parallax').parallax(); });</script>
-        <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-        <script>
-            let videoStream;
-
-            async function startScan() {
-                const video = document.getElementById("video");
-                const canvas = document.getElementById("canvas");
-                const context = canvas.getContext("2d");
-
-                try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "environment" }
-                    });
-
-                    video.srcObject = videoStream;
-                    video.setAttribute("playsinline", true); // iPhone fix
-                    await video.play();
-
-                    scanFrame();
-                } catch (err) {
-                    alert("Camera access denied or unavailable.");
-                    console.error(err);
-                }
-
-                function scanFrame() {
-                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                        const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-                        const code = jsQR(imgData.data, canvas.width, canvas.height);
-
-                        // Only alert when the QR actually has text
-                        if (code && code.data && code.data.trim() !== "") {
-                            alert("QR Code: " + code.data);
-                            stopScan();
-                            return;
-                        }
-                    }
-                    requestAnimationFrame(scanFrame);
-                }
-            }
-
-            function stopScan() {
-                if (videoStream) {
-                    videoStream.getTracks().forEach(track => track.stop());
-                }
-            }
-
-        </script>
 </body>
 
 </html>
