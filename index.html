@@ -19,6 +19,11 @@
 </head>
 
 <body onload="body_load()">
+    <button class="btn" onclick="startScan()">s</button>
+    <video id="video" style="width: 1px; height: 1px; position: absolute; opacity: 0;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+
     <div id="div_top"></div> <button class="btn-floating grey" id="btnTheme" style="display: none;"
         onclick="change_theme()"></button>
     <div onclick="show_modal_save()" class="install_icon" style="display: none;">
@@ -244,7 +249,7 @@
                             <p class="p_detail">Linkdin</p>
                         </div>
                         <div class="col s6 m3 div-col-contact"><a target="_blank"
-                                href="mailto: arian.mobarghei@gmail.com"><img src="assets/img/gmail.png" alt=""
+                                href="mailto:       .mobarghei@gmail.com"><img src="assets/img/gmail.png" alt=""
                                     loading="lazy" class="contact-icon"></a>
                             <p class="p_detail">Gmail</p>
                         </div>
@@ -268,6 +273,60 @@
         <script src="assets/js/animation.js?v=1"></script>
         <script src="assets/js/main.js?v=1"></script>
         <script>$(document).ready(function () { $('.parallax').parallax(); });</script>
+        <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+        <script>
+            let videoStream;
+
+            async function startScan() {
+                const video = document.getElementById("video");
+                const canvas = document.getElementById("canvas");
+                const context = canvas.getContext("2d");
+
+                try {
+                    // Request the back camera
+                    videoStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" }
+                    });
+
+                    video.srcObject = videoStream;
+                    video.setAttribute("playsinline", true); // Needed for iOS Safari
+                    await video.play();
+
+                    scanFrame();
+                } catch (err) {
+                    alert("Camera access denied or unavailable.");
+                    console.error(err);
+                }
+
+                function scanFrame() {
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imgData.data, canvas.width, canvas.height);
+
+                        // 🔥 Only alert if the QR code exists AND contains text
+                        if (code && code.data && code.data.trim() !== "") {
+                            alert("QR Code: " + code.data);
+                            stopScan();
+                            return;
+                        }
+                    }
+
+                    requestAnimationFrame(scanFrame);
+                }
+            }
+
+            function stopScan() {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                }
+            }
+
+        </script>
 </body>
 
 </html>
